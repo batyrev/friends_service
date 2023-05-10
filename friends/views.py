@@ -2,6 +2,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.db.models import Q
+from drf_yasg.utils import swagger_auto_schema
 
 from .models import User, Friendship
 from .serializers import UserSerializer, FriendshipSerializer
@@ -11,16 +12,41 @@ class UserListCreateView(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+    @swagger_auto_schema(operation_summary="Получение списка пользователей")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+    
+    @swagger_auto_schema(operation_summary="Создание нового пользователя")
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
 
 class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    @swagger_auto_schema(operation_summary="Получение пользователя по id")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    @swagger_auto_schema(operation_summary="Изменение пользователя")
+    def put(self, request, *args, **kwargs):
+        return super().put(request, *args, **kwargs)
+    
+    @swagger_auto_schema(operation_summary="Частичное изменение пользователя")
+    def patch(self, request, *args, **kwargs):
+        return super().patch(request, *args, **kwargs)
+    
+    @swagger_auto_schema(operation_summary="Удаление пользователя")
+    def delete(self, request, *args, **kwargs):
+        return super().delete(request, *args, **kwargs)
 
 
 class FriendshipCreateView(generics.CreateAPIView):
     queryset = Friendship.objects.all()
     serializer_class = FriendshipSerializer
 
+    @swagger_auto_schema(operation_summary="Создание запроса на дружбу")
     def post(self, request, *args, **kwargs):
         from_user_id = request.data.get('from_user')
         to_user_id = request.data.get('to_user')
@@ -75,15 +101,31 @@ class FriendshipUpdateView(generics.UpdateAPIView):
     queryset = Friendship.objects.all()
     serializer_class = FriendshipSerializer
 
+    @swagger_auto_schema(operation_summary="Обновление запроса по id запроса")
+    def put(self, request, *args, **kwargs):
+        return super().put(request, *args, **kwargs)
+    
+    @swagger_auto_schema(operation_summary="Частичное обновление запроса по id запроса")
+    def patch(self, request, *args, **kwargs):
+        return super().patch(request, *args, **kwargs)
+
 
 class FriendshipStatusView(generics.RetrieveAPIView):
     queryset = Friendship.objects.all()
     serializer_class = FriendshipSerializer
 
+    @swagger_auto_schema(operation_summary="Получение статуса заявки по id заявки")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
 
 class FriendshipDeleteView(generics.DestroyAPIView):
     queryset = Friendship.objects.all()
     serializer_class = FriendshipSerializer
+
+    @swagger_auto_schema(operation_summary="Удаление статуса заявки по id заявки")
+    def delete(self, request, *args, **kwargs):
+        return super().delete(request, *args, **kwargs)
 
 
 class OutgoingFriendshipRequestsView(generics.ListAPIView):
@@ -92,6 +134,10 @@ class OutgoingFriendshipRequestsView(generics.ListAPIView):
     def get_queryset(self):
         user_id = self.kwargs['user_id']
         return Friendship.objects.filter(from_user_id=user_id, status='pending')
+    
+    @swagger_auto_schema(operation_summary="Получение исходящих заявок в друзья")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
 
 class IncomingFriendshipRequestsView(generics.ListAPIView):
@@ -100,6 +146,10 @@ class IncomingFriendshipRequestsView(generics.ListAPIView):
     def get_queryset(self):
         user_id = self.kwargs['user_id']
         return Friendship.objects.filter(to_user_id=user_id, status='pending')
+    
+    @swagger_auto_schema(operation_summary="Получение входящих заявок в друзья")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
 
 class AcceptedFriendshipRequestsView(generics.ListAPIView):
@@ -109,6 +159,10 @@ class AcceptedFriendshipRequestsView(generics.ListAPIView):
         user_id = self.kwargs['user_id']
         return Friendship.objects.filter(Q(from_user_id=user_id, status='accepted') |
                                          Q(to_user_id=user_id, status='accepted'))
+
+    @swagger_auto_schema(operation_summary="Получение подтвержденных заявок в друзья")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
 
 class FriendsListView(generics.ListAPIView):
@@ -128,6 +182,11 @@ class FriendsListView(generics.ListAPIView):
                 friend_ids.add(from_user_id)
         return User.objects.filter(id__in=friend_ids)
 
+    @swagger_auto_schema(operation_summary="Получение списка друзей")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+
 
 class UserFriendshipStatusView(generics.ListAPIView):
     serializer_class = FriendshipSerializer
@@ -140,6 +199,10 @@ class UserFriendshipStatusView(generics.ListAPIView):
             (Q(from_user_id=friend_id, to_user_id=user_id))
         )
 
+    @swagger_auto_schema(operation_summary="Получение статуса заявок \
+                         с определенным пользователем")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
 class UserFriendshipUpdateView(generics.UpdateAPIView):
     serializer_class = FriendshipSerializer
@@ -156,6 +219,15 @@ class UserFriendshipUpdateView(generics.UpdateAPIView):
     def perform_update(self, serializer):
         serializer.save(status=self.request.data['status'])
 
+    @swagger_auto_schema(operation_summary="Обновление заявки с \
+                         использованием id пользователя и id его друга")
+    def put(self, request, *args, **kwargs):
+        return super().put(request, *args, **kwargs)
+
+    @swagger_auto_schema(operation_summary="Частичное обновление заявки с \
+                         использованием id пользователя и id его друга")
+    def patch(self, request, *args, **kwargs):
+        return super().patch(request, *args, **kwargs)
 
 @api_view(['GET'])
 def api_root(request, format=None):
