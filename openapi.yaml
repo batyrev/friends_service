@@ -1,0 +1,412 @@
+openapi: '3.0.0'
+info:
+  title: Friends Service API
+  contact:
+    name: Batyrev Vladislav
+    email: batyrev-vr@yandex.ru
+  version: v1
+host: localhost:8000
+schemes:
+  - http
+basePath: /
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  Basic:
+    type: basic
+security:
+  - Basic: []
+paths:
+  /:
+    get:
+      operationId: _list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - ''
+    parameters: []
+  /friendship/accepted/{user_id}/:
+    get:
+      operationId: friendship_accepted_read
+      summary: Получение подтвержденных заявок в друзья
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Friendship'
+      tags:
+        - friendship
+    parameters:
+      - name: user_id
+        in: path
+        required: true
+        type: string
+  /friendship/create/:
+    post:
+      operationId: friendship_create_create
+      summary: Создание запроса на дружбу
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Friendship'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Friendship'
+      tags:
+        - friendship
+    parameters: []
+  /friendship/delete/{id}/:
+    delete:
+      operationId: friendship_delete_delete
+      summary: Удаление статуса заявки по id заявки
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - friendship
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this friendship.
+        required: true
+        type: integer
+  /friendship/incoming/{user_id}/:
+    get:
+      operationId: friendship_incoming_read
+      summary: Получение входящих заявок в друзья
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Friendship'
+      tags:
+        - friendship
+    parameters:
+      - name: user_id
+        in: path
+        required: true
+        type: string
+  /friendship/outgoing/{user_id}/:
+    get:
+      operationId: friendship_outgoing_read
+      summary: Получение исходящих заявок в друзья
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Friendship'
+      tags:
+        - friendship
+    parameters:
+      - name: user_id
+        in: path
+        required: true
+        type: string
+  /friendship/status/{id}/:
+    get:
+      operationId: friendship_status_read
+      summary: Получение статуса заявки по id заявки
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Friendship'
+      tags:
+        - friendship
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this friendship.
+        required: true
+        type: integer
+  /friendship/update/{id}/:
+    put:
+      operationId: friendship_update_update
+      summary: Обновление запроса по id запроса
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Friendship'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Friendship'
+      tags:
+        - friendship
+    patch:
+      operationId: friendship_update_partial_update
+      summary: Частичное обновление запроса по id запроса
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Friendship'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Friendship'
+      tags:
+        - friendship
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this friendship.
+        required: true
+        type: integer
+  /users/:
+    get:
+      operationId: users_list
+      summary: Получение списка пользователей
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+      tags:
+        - users
+    post:
+      operationId: users_create
+      summary: Создание нового пользователя
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      tags:
+        - users
+    parameters: []
+  /users/{from_user_id}/friendship/update/{friend_id}/:
+    put:
+      operationId: users_friendship_update_update
+      summary: Обновление заявки с                          использованием id пользователя
+        и id его друга
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Friendship'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Friendship'
+      tags:
+        - users
+    patch:
+      operationId: users_friendship_update_partial_update
+      summary: Частичное обновление заявки с                          использованием
+        id пользователя и id его друга
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Friendship'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Friendship'
+      tags:
+        - users
+    parameters:
+      - name: friend_id
+        in: path
+        required: true
+        type: string
+      - name: from_user_id
+        in: path
+        required: true
+        type: string
+  /users/{id}/:
+    get:
+      operationId: users_read
+      summary: Получение пользователя по id
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      tags:
+        - users
+    put:
+      operationId: users_update
+      summary: Изменение пользователя
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      tags:
+        - users
+    patch:
+      operationId: users_partial_update
+      summary: Частичное изменение пользователя
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      tags:
+        - users
+    delete:
+      operationId: users_delete
+      summary: Удаление пользователя
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - users
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this user.
+        required: true
+        type: integer
+  /users/{id}/friends/:
+    get:
+      operationId: users_friends_list
+      summary: Получение списка друзей
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+      tags:
+        - users
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+  /users/{id}/friendship/status/{friend_id}/:
+    get:
+      operationId: users_friendship_status_read
+      summary: Получение статуса заявок                          с определенным пользователем
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Friendship'
+      tags:
+        - users
+    parameters:
+      - name: friend_id
+        in: path
+        required: true
+        type: string
+      - name: id
+        in: path
+        required: true
+        type: string
+definitions:
+  Friendship:
+    required:
+      - from_user
+      - to_user
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      status:
+        title: Status
+        type: string
+        enum:
+          - pending
+          - accepted
+          - rejected
+      from_user:
+        title: From user
+        type: integer
+      to_user:
+        title: To user
+        type: integer
+  User:
+    required:
+      - username
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      username:
+        title: Username
+        type: string
+        maxLength: 255
+        minLength: 1
